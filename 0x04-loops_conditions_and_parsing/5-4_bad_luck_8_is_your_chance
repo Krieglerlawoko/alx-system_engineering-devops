@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Loops from 1 to 10
+
+count=0
+
+while [ $c -lt 10 ]
+do
+  if [ $c -eq 3 ]
+  then
+    echo "bad luck"
+  elif [ $c -eq 7 ]
+  then
+    echo "good luck"
+  else
+    echo "Best School"
+  if
+  (( c++ ))
+done
+

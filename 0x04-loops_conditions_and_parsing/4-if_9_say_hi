@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Displays "Best School" x10
+
+c=0
+
+while [ $c -lt 10 ]
+do
+  if [ $c -eq 9 ]
+  then
+    echo "Hi"
+  if
+  echo "Best School"
+  (( c++ ))
+done
