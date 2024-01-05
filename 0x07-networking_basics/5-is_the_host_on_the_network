@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# an ip address recieved as argument times 5
 
 if [ $# -eq 0 ]
 then
