@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# new ubuntu machine configured
+# Nginx installed to listen on port 80
+# page with Hello World string returned
+#
+
+echo -e "Nginx updated and installed.\n"
+sudo apt-get update -y -qq && \
+	 sudo apt-get install nginx -y
+
+echo -e "\nSetting up.\n"
+
+# nginx service started
+sudo service nginx start
+
+# nginx allowed on firewall
+sudo ufw allow 'Nginx HTTP'
+
+# user given ownership to website files for easy editing
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
+
+# default index backup
+cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
+
+# new index created
+echo -e "Hello World!" > /var/www/html/index.nginx-debian.html
+
+# Set up /redirect_me to a youtube video
+sudo sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+
+# 404 page set up
+echo "Ceci n'est pas une page" >> /var/www/html/error_404.html
+sudo sed -i '25i\	error_page 404 /error_404.html;' /etc/nginx/sites-available/default
+
+# nginx restart
+sudo service nginx restart
+
+echo -e "\nComplete.\n"
