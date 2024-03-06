@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Load balancer instaler
 
-
 echo -e "Updating and doing some minor checks...\n"
 
 function install() {
