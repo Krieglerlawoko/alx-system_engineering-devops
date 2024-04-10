@@ -39,8 +39,8 @@ def recurse(subreddit, hot_list=[], after="", count=0):
     count += results.get("dist")
 
     # Append post titles to the hot_list
-    for c in results.get("children"):
-        hot_list.append(c.get("data").get("title"))
+    for a in results.get("children"):
+        hot_list.append(a.get("data").get("title"))
 
     # If there are more posts to retrieve, recursively call the function
     if after is not None:
