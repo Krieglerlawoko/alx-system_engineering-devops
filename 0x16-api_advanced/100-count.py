@@ -1,51 +1,46 @@
+#!/usr/bin/python3
+"""
+Words in all hot posts of a given Reddit subreddit counted.
+"""
 import requests
 
-def count_words(subreddit, word_list):
-    def get_hot_articles(subreddit, after=None):
-        url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-        params = {"limit": 100, "after": after}
-        headers = {"User-Agent": "Reddit Keyword Counter"}
 
-        response = requests.get(url, params=params, headers=headers)
-        data = response.json()
+def count_words(subreddit, word_list, after=None, counts={}):
+    """
+    Reddit API queried, parses the titles
+    """
+    if not word_list or word_list == [] or not subreddit:
+        return
 
-        if "data" in data and "children" in data["data"]:
-            articles = data["data"]["children"]
-            return articles, data["data"]["after"]
-        else:
-            return [], None
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-    def parse_title(title, word_list):
-        title_lower = title.lower()
+    params = {"limit": 100}
+    if after:
+        params["after"] = after
+
+    response = requests.get(url,
+                            headers=headers,
+                            params=params,
+                            allow_redirects=False)
+
+    if response.status_code != 200:
+        return
+
+    data = response.json()
+    children = data["data"]["children"]
+
+    for p in children:
+        title = p["data"]["title"].lower()
         for w in word_list:
-            if w.lower() in title_lower:
-                return w
-        return None
+            if w.lower() in title:
+                counts[w] = counts.get(w, 0) + title.count(w.lower())
 
-    def count_keywords(articles, word_list, counts):
-        for article in articles:
-            title = article["data"]["title"]
-            keyword = parse_title(title, word_list)
-            if keyword:
-                counts[keyword] = counts.get(keyword, 0) + 1
-
-        return counts
-
-    def print_sorted_counts(counts):
-        sorted_counts = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
-        for keyword, count in sorted_counts:
-            print(f"{keyword}: {count}")
-
-    def recursive_query(subreddit, word_list, after=None, counts=None):
-        if counts is None:
-            counts = {}
-
-        articles, next_after = get_hot_articles(subreddit, after)
-        counts = count_keywords(articles, word_list, counts)
-
-        if next_after:
-            recursive_query(subreddit, word_list, next_after, counts)
-        else:
-            print_sorted_counts(counts)
-
-    recursive_query(subreddit, word_list)
+    after = data["data"]["after"]
+    if after:
+        count_words(subreddit, word_list, after, counts)
+    else:
+        sorted_counts = sorted(counts.items(),
+                               key=lambda x: (-x[1], x[0].lower()))
+        for word, count in sorted_counts:
+            print(f"{word.lower()}: {count}")

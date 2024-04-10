@@ -1,16 +1,30 @@
+#!/usr/bin/python3
+"""
+Hot posts printed on a given Reddit subreddit.
+"""
+
 import requests
 
-def top_ten(subreddit):
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
-    headers = {"User-Agent": "My Reddit Bot"}  # Set a user agent to avoid rate limiting
 
-    try:
-        response = requests.get(url, headers=headers)
-        data = response.json()
-        if "data" in data and "children" in data["data"]:
-            for post in data["data"]["children"]:
-                print(post["data"]["title"])
-        else:
-            print("None")  # Invalid subreddit or other issue
-    except requests.RequestException:
-        print("None")  # Error occurred during request
+def top_ten(subreddit):
+    """Titles of 10 hottest posts printed on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+
+    headers = {
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
+    }
+
+    params = {
+        "limit": 10
+    }
+
+    response = requests.get(url, headers=headers, params=params,
+                            allow_redirects=False)
+
+    if response.status_code == 404:
+        print("None")
+        return
+
+    results = response.json().get("data")
+
+    [print(c.get("data").get("title")) for c in results.get("children")]
