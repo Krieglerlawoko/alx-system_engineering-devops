@@ -34,12 +34,12 @@ def recurse(subreddit, hot_list=[], after="", count=0):
     if response.status_code == 404:
         return None
     # Parse the JSON response and extract relevant data
-    results = response.json().get("data")
-    after = results.get("after")
-    count += results.get("dist")
+    result = response.json().get("data")
+    after = result.get("after")
+    count += result.get("dist")
 
     # Append post titles to the hot_list
-    for a in results.get("children"):
+    for a in result.get("children"):
         hot_list.append(a.get("data").get("title"))
 
     # If there are more posts to retrieve, recursively call the function
